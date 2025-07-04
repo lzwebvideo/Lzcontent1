@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reproductor Seguro Clappr</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #player {
+      width: 100%;
+      height: 100%;
+      max-height: 100vh;
+    }
+    .error-message {
+      color: red;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+</head>
+<body>
+  <div id="player"></div>
+
+  <script>
+    function getQueryParam(param) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(param);
+    }
+    const encoded = getQueryParam('r');
+    const playerContainer = document.getElementById('player');
+
+    if (encoded) {
+      try {
+        const decodedUrl = atob(encoded);
+        // Validar URL básica
+        if (!decodedUrl.match(/\.(mp4|m3u8)(\?|$)/i)) {
+          playerContainer.innerHTML = '<div class="error-message">Error: URL no válida para reproducción.</div>';
+        } else {
+          var player = new Clappr.Player({
+            source: decodedUrl,
+            parentId: '#player',
+            width: '100%',
+            height: '100%',
+            autoPlay: true,
+            mute: false,
+            mediacontrol: {seekbar: "#E8E8E8"},
+            baseUrl: '',
+            watermark: null,
+            hideMediaControl: false,
+          });
+        }
+      } catch (e) {
+        playerContainer.innerHTML = '<div class="error-message">Error: enlace inválido o corrupto.</div>';
+      }
+    } else {
+      playerContainer.innerHTML = '<div class="error-message">Error: no se proporcionó ningún enlace.</div>';
+    }
+  </script>
+</body>
+</html>
